@@ -1,5 +1,22 @@
 import { create } from 'zustand'
-import type { CampaignConfig, GameId, Prize, PuzzleSettings, FindDifferencesSettings } from '@/shared/types'
+import type { CampaignConfig, GameId, Prize, PuzzleSettings, FindDifferencesSettings, MemoryMatchSettings } from '@/shared/types'
+import { MEMORY_MATCH_CARDS } from '@/games/memory-match'
+
+const DEFAULT_MEMORY_MATCH_SETTINGS: MemoryMatchSettings = {
+  cards: MEMORY_MATCH_CARDS,
+  opportunities: { mobile: 10, tablet: 20, desktop: 10 },
+  // ≤3 opp.used→prize[0], ≤7→[1], ≤13→[2], ≤20→[3], >20 or lost→[4]
+  opportunityThresholds: [3, 7, 13, 20],
+}
+
+// Premios de MEJOR a PEOR para Memory Match (por oportunidades usadas)
+const MEMORY_MATCH_PRIZES: Prize[] = [
+  { id: '1', name: '40% de descuento', probability: 0, description: '¡Memoria perfecta!', code: 'PROMO40' },
+  { id: '2', name: '30% de descuento', probability: 0, description: 'Menos de 8 errores', code: 'PROMO30' },
+  { id: '3', name: '20% de descuento', probability: 0, description: 'Menos de 14 errores', code: 'PROMO20' },
+  { id: '4', name: 'Envío gratis', probability: 0, description: 'Completaste el reto', code: 'ENVIOGRATIS' },
+  { id: '5', name: 'Sin premio', probability: 0, description: '¡Inténtalo de nuevo!' },
+]
 
 const DEFAULT_PUZZLE_SETTINGS: PuzzleSettings = {
   imageUrl: 'https://picsum.photos/seed/gamestudio/600/600',
@@ -60,11 +77,13 @@ export const DEFAULT_CONFIG: CampaignConfig = {
 const GAME_PRIZES: Record<GameId, Prize[]> = {
   puzzle: PUZZLE_PRIZES,
   'find-differences': FIND_DIFFERENCES_PRIZES,
+  'memory-match': MEMORY_MATCH_PRIZES,
 }
 
 const GAME_SETTINGS = {
   puzzle: DEFAULT_PUZZLE_SETTINGS,
   'find-differences': DEFAULT_FIND_DIFFERENCES_SETTINGS,
+  'memory-match': DEFAULT_MEMORY_MATCH_SETTINGS,
 }
 
 interface CampaignStore {

@@ -7,6 +7,8 @@ export type {
   PuzzleSettings,
   DifferenceArea,
   FindDifferencesSettings,
+  MemoryCardItem,
+  MemoryMatchSettings,
   GameSettings,
 } from './game'
 export type { CampaignConfig, WawSettings, CampaignConfigWithWaw } from './campaign'

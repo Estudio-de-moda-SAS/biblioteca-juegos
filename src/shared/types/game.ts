@@ -1,6 +1,6 @@
 import type { Prize } from './prize'
 
-export type GameId = 'puzzle' | 'find-differences'
+export type GameId = 'puzzle' | 'find-differences' | 'memory-match'
 
 export type GameScreen = 'start' | 'instructions' | 'playing' | 'result'
 
@@ -48,4 +48,22 @@ export interface FindDifferencesSettings {
   missThresholds: number[]
 }
 
-export type GameSettings = PuzzleSettings | FindDifferencesSettings
+export interface MemoryCardItem {
+  id: string
+  image: string
+  alt: string
+}
+
+export interface MemoryMatchSettings {
+  cards: MemoryCardItem[]
+  opportunities: {
+    mobile: number
+    tablet: number
+    desktop: number
+  }
+  // Thresholds for opportunities USED (smaller = better match)
+  // prizes[0] if used ≤ thresholds[0], prizes[1] if ≤ thresholds[1], …, prizes[last] fallback
+  opportunityThresholds: number[]
+}
+
+export type GameSettings = PuzzleSettings | FindDifferencesSettings | MemoryMatchSettings
