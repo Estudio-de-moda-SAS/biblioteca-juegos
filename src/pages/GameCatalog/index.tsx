@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, SlidersHorizontal } from 'lucide-react'
+
 import { ALL_GAMES } from '@/games'
 import type { GameMeta } from '@/shared/types'
 import { Badge, Card } from '@/shared/components'
@@ -58,12 +59,6 @@ function GameCard({ meta }: { meta: GameMeta }) {
           className="flex-1 rounded-lg bg-brand-500 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition-colors hover:bg-brand-600"
         >
           Probar juego
-        </Link>
-        <Link
-          to={`/builder?game=${meta.id}`}
-          className="flex-1 rounded-lg border border-white/10 bg-surface-100 py-2 text-center text-sm font-medium text-gray-300 transition-colors hover:bg-surface-200"
-        >
-          Configurar
         </Link>
       </div>
     </Card>

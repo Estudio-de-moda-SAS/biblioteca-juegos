@@ -6,9 +6,7 @@ interface TopBarProps {
 }
 
 const BREADCRUMBS: Record<string, string> = {
-  '/': 'Dashboard',
-  '/catalog': 'Catálogo de Juegos',
-  '/builder': 'Campaign Builder',
+  '/': 'Catálogo de Juegos',
   '/preview': 'Vista Previa',
 }
 
@@ -16,7 +14,7 @@ function getBreadcrumb(pathname: string): string {
   for (const [path, label] of Object.entries(BREADCRUMBS)) {
     if (path !== '/' && pathname.startsWith(path)) return label
   }
-  return BREADCRUMBS['/'] ?? 'Dashboard'
+  return BREADCRUMBS['/'] ?? 'Catálogo de Juegos'
 }
 
 export function TopBar({ onMenuClick }: TopBarProps) {

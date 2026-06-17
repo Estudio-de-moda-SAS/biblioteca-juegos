@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Gamepad2, Home, Library, Settings, X } from 'lucide-react'
+import { Gamepad2, Library, X } from 'lucide-react'
 import { cn } from '@/shared/utils'
 
 interface SidebarProps {
@@ -8,9 +8,7 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Dashboard', icon: Home },
-  { to: '/catalog', label: 'Catálogo de Juegos', icon: Library },
-  { to: '/builder', label: 'Campaign Builder', icon: Settings },
+  { to: '/', label: 'Catálogo de Juegos', icon: Library },
 ]
 
 export function Sidebar({ open, onClose }: SidebarProps) {
