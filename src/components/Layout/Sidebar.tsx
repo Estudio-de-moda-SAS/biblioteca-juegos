@@ -84,7 +84,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <div className="rounded-lg bg-brand-500/10 p-3">
             <div className="flex items-center gap-2">
               <Gamepad2 size={16} className="text-brand-400" />
-              <p className="text-xs font-medium text-brand-300">Integración Bitex.io</p>
+              <p className="text-xs font-medium text-brand-300">Integración Vtex.io</p>
             </div>
             <p className="mt-1 text-[11px] text-gray-500">
               Configura y exporta juegos listos para producción.

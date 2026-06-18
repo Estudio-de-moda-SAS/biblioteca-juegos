@@ -31,7 +31,7 @@ export default function Home() {
             Game Studio
           </h1>
           <p className="mb-6 max-w-lg text-base text-white/60">
-            Crea, configura y despliega juegos promocionales para tus tiendas Bitex.io. Sin backend,
+            Crea, configura y despliega juegos promocionales para tus tiendas Vtex.io. Sin backend,
             sin complicaciones — todo desde el navegador.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -119,7 +119,7 @@ export default function Home() {
           {[
             { step: '01', title: 'Elige un juego', desc: 'Explora el catálogo y selecciona el juego que mejor se adapte a tu campaña.' },
             { step: '02', title: 'Configura tu campaña', desc: 'Personaliza colores, textos, premios y configura la integración WAW.' },
-            { step: '03', title: 'Exporta el código', desc: 'Copia el JSON de configuración o el snippet de embed para Bitex.' },
+            { step: '03', title: 'Exporta el código', desc: 'Copia el JSON de configuración o el snippet de embed para Vtex.' },
           ].map(({ step, title, desc }) => (
             <div key={step} className="flex gap-3">
               <span className="mt-0.5 shrink-0 font-mono text-xs font-bold text-brand-500">{step}</span>

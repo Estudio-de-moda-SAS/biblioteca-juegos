@@ -739,7 +739,7 @@ export default function CampaignBuilder() {
       <Modal open={showJson} onClose={() => setShowJson(false)} title="Configuración JSON" size="xl">
         <div className="space-y-4">
           <p className="text-sm text-gray-400">
-            Copia este JSON para implementar el juego en Bitex o guardarlo como plantilla.
+            Copia este JSON para implementar el juego en Vtex o guardarlo como plantilla.
           </p>
           <JsonViewer value={jsonConfig} />
         </div>
@@ -749,7 +749,7 @@ export default function CampaignBuilder() {
       <Modal open={showEmbed} onClose={() => setShowEmbed(false)} title="Código de Embed" size="xl">
         <div className="space-y-4">
           <p className="text-sm text-gray-400">
-            Inserta este snippet en cualquier página de Bitex para mostrar el juego.
+            Inserta este snippet en cualquier página de Vtex para mostrar el juego.
           </p>
           <JsonViewer value={embedSnippet} title="HTML Snippet" />
         </div>
