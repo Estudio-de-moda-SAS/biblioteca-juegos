@@ -9,7 +9,7 @@ import type {
 import { prizeByThreshold, formatTime } from '@/shared/utils'
 import { useTimer } from '@/shared/hooks'
 import { cn } from '@/shared/utils'
-import { GameStartScreen, GameResultScreen } from '@/shared/components'
+import { GameStartScreen, GameLeadForm } from '@/shared/components'
 import { FIND_DIFFERENCES_INSTRUCTIONS } from './FindDifferencesConfig'
 
 // ─── Tipos internos ──────────────────────────────────────────────────────────
@@ -267,7 +267,35 @@ export function FindDifferences({ config, onComplete }: Props) {
   }
 
   if (screen === 'result' && result) {
-    return <GameResultScreen config={config} result={result} onReset={() => setScreen('start')} />
+    const statsSlot = (
+      <div className="flex justify-center gap-4">
+        <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
+          <p className="text-xs text-white/50">Diferencias encontradas</p>
+          <p className="mt-0.5 text-xl font-bold text-white">
+            {foundIds.size}
+            <span className="text-sm font-normal text-white/40"> / {differences.length}</span>
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
+          <p className="text-xs text-white/50">Fallos</p>
+          <p className="mt-0.5 text-xl font-bold text-red-400">{missCount}</p>
+        </div>
+        {showTimer && (
+          <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
+            <p className="text-xs text-white/50">Tiempo</p>
+            <p className="mt-0.5 text-xl font-bold text-white">{formatTime(result.timeElapsed)}</p>
+          </div>
+        )}
+      </div>
+    )
+    return (
+      <GameLeadForm
+        config={config}
+        result={result}
+        statsSlot={statsSlot}
+        onReset={() => setScreen('start')}
+      />
+    )
   }
 
   const progress = differences.length > 0 ? (foundIds.size / differences.length) * 100 : 0

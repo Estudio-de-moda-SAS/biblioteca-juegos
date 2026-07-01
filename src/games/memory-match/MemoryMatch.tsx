@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Heart, RotateCcw, Send, Trophy, Frown } from 'lucide-react'
-import type { CampaignConfig, GameResult, MemoryMatchSettings, WawSubmitStatus } from '@/shared/types'
+import { Heart } from 'lucide-react'
+import type { CampaignConfig, GameResult, MemoryMatchSettings } from '@/shared/types'
 import { prizeByThreshold } from '@/shared/utils'
-import { GameStartScreen, PrizeReveal, ConfettiEffect, Button, Input } from '@/shared/components'
-import { buildLeadPayload, submitLead } from '@/services/wawService'
+import { GameStartScreen, GameLeadForm } from '@/shared/components'
 import { cn } from '@/shared/utils'
 import { MemoryCard } from './MemoryCard'
 import {
@@ -71,14 +70,6 @@ export function MemoryMatch({ config, onComplete }: Props) {
   const [resultPairsFound, setResultPairsFound] = useState(0)
   const [resultOpportunitiesLeft, setResultOpportunitiesLeft] = useState(0)
 
-  // Lead capture
-  const [revealed, setRevealed] = useState(false)
-  const [showForm, setShowForm] = useState(false)
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [submitStatus, setSubmitStatus] = useState<WawSubmitStatus>('idle')
-
   // Refs to read current values inside setTimeout without stale closures
   const matchedPairIdsRef = useRef<Set<string>>(new Set())
   const opportunitiesRef = useRef(0)
@@ -117,12 +108,6 @@ export function MemoryMatch({ config, onComplete }: Props) {
     setGameResult(null)
     setResultPairsFound(0)
     setResultOpportunitiesLeft(0)
-    setRevealed(false)
-    setShowForm(false)
-    setSubmitStatus('idle')
-    setName('')
-    setEmail('')
-    setPhone('')
   }, [settings])
 
   useEffect(() => {
@@ -212,32 +197,6 @@ export function MemoryMatch({ config, onComplete }: Props) {
     }
   }
 
-  // ── WAW lead submit ───────────────────────────────────────────────────────
-  async function handleLeadSubmit() {
-    if (!name || !email || !gameResult) return
-    setSubmitStatus('pending')
-    const payload = buildLeadPayload({
-      name,
-      email,
-      phone: phone || undefined,
-      campaignId: config.title.toLowerCase().replace(/\s+/g, '-'),
-      campaignTitle: config.title,
-      gameId: 'memory-match',
-      score: gameResult.score,
-      timeElapsed: 0,
-      prize: gameResult.prize,
-      metadata: {
-        result: gameResult.completed ? 'won' : 'lost',
-        pairsFound: resultPairsFound,
-        opportunitiesRemaining: resultOpportunitiesLeft,
-        totalPairs: totalPairsRef.current,
-        totalOpportunities: totalOpportunitiesRef.current,
-      },
-    })
-    const res = await submitLead(payload)
-    setSubmitStatus(res.success ? 'success' : 'error')
-  }
-
   // ─────────────────────────────────────────────────────────────────────────
   // ── Screen: start ────────────────────────────────────────────────────────
   if (screen === 'start') {
@@ -297,135 +256,37 @@ export function MemoryMatch({ config, onComplete }: Props) {
   // ── Screen: result ────────────────────────────────────────────────────────
   if (screen === 'result' && gameResult) {
     const won = gameResult.completed
-    const prizeIsReal = gameResult.prize !== null && !gameResult.prize.name.toLowerCase().includes('sin')
-
-    return (
-      <div
-        className="flex min-h-full flex-col items-center justify-center gap-5 overflow-y-auto p-6 text-center mm-result"
-        style={{
-          background: `linear-gradient(135deg, ${config.primaryColor}33 0%, ${config.secondaryColor} 100%)`,
-        }}
-      >
-        <ConfettiEffect active={revealed && won && prizeIsReal} />
-
-        <div className="w-full max-w-sm space-y-5">
-          {/* Heading */}
-          <div className="space-y-1">
-            {won ? (
-              <Trophy size={40} className="mx-auto text-yellow-400 drop-shadow-lg" />
-            ) : (
-              <Frown size={40} className="mx-auto text-white/50" />
-            )}
-            <h2 className="text-2xl font-bold text-white">
-              {won ? '¡Felicitaciones!' : 'Lo sentimos'}
-            </h2>
-            <p className="text-sm text-white/60">
-              {won
-                ? '¡Encontraste todas las parejas!'
-                : 'Te quedaste sin oportunidades.'}
-            </p>
-          </div>
-
-          {/* Stats */}
-          <div className="flex justify-center gap-4">
-            <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
-              <p className="text-xs text-white/50">Parejas encontradas</p>
-              <p className="mt-0.5 text-xl font-bold text-white">
-                {resultPairsFound}
-                <span className="text-sm font-normal text-white/40"> / {totalPairsRef.current}</span>
-              </p>
-            </div>
-            <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
-              {won ? (
-                <>
-                  <p className="text-xs text-white/50">Oportunidades restantes</p>
-                  <p className="mt-0.5 text-xl font-bold text-green-400">{resultOpportunitiesLeft}</p>
-                </>
-              ) : (
-                <>
-                  <p className="text-xs text-white/50">Oportunidades utilizadas</p>
-                  <p className="mt-0.5 text-xl font-bold text-red-400">{totalOpportunitiesRef.current}</p>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Prize reveal — only if won */}
-          {won && (
-            <PrizeReveal
-              prize={gameResult.prize}
-              revealed={revealed}
-              onReveal={() => {
-                setRevealed(true)
-                setTimeout(() => setShowForm(true), 1200)
-              }}
-            />
+    const statsSlot = (
+      <div className="flex justify-center gap-4">
+        <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
+          <p className="text-xs text-white/50">Parejas encontradas</p>
+          <p className="mt-0.5 text-xl font-bold text-white">
+            {resultPairsFound}
+            <span className="text-sm font-normal text-white/40"> / {totalPairsRef.current}</span>
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
+          {won ? (
+            <>
+              <p className="text-xs text-white/50">Oportunidades restantes</p>
+              <p className="mt-0.5 text-xl font-bold text-green-400">{resultOpportunitiesLeft}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs text-white/50">Oportunidades utilizadas</p>
+              <p className="mt-0.5 text-xl font-bold text-red-400">{totalOpportunitiesRef.current}</p>
+            </>
           )}
-
-          {/* Lead capture form */}
-          {((won && revealed && showForm) || (!won)) && submitStatus !== 'success' && (
-            <div className="animate-slide-up space-y-4 rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-              <p className="text-sm font-medium text-white">
-                {won && prizeIsReal
-                  ? '¡Deja tus datos para reclamar tu premio!'
-                  : 'Déjanos tus datos para participar en futuras promociones'}
-              </p>
-              <div className="space-y-3 text-left">
-                <Input
-                  label="Nombre"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Tu nombre"
-                />
-                <Input
-                  label="Email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@email.com"
-                />
-                <Input
-                  label="Teléfono (opcional)"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+57 300 000 0000"
-                />
-              </div>
-              <Button
-                className="w-full"
-                icon={<Send size={16} />}
-                loading={submitStatus === 'pending'}
-                disabled={!name || !email}
-                onClick={handleLeadSubmit}
-                style={{ backgroundColor: config.primaryColor }}
-              >
-                {won && prizeIsReal ? 'Reclamar premio' : 'Enviar datos'}
-              </Button>
-              {submitStatus === 'error' && (
-                <p className="text-xs text-red-400">Error al enviar. Intenta nuevamente.</p>
-              )}
-            </div>
-          )}
-
-          {submitStatus === 'success' && (
-            <div className="animate-bounce-in rounded-xl border border-green-500/30 bg-green-500/20 p-4">
-              <p className="text-sm font-medium text-green-300">
-                ¡Datos enviados correctamente! Te contactaremos pronto.
-              </p>
-            </div>
-          )}
-
-          <Button
-            variant="ghost"
-            icon={<RotateCcw size={16} />}
-            onClick={() => setScreen('start')}
-            className="w-full border border-white/20 text-white hover:bg-white/10"
-          >
-            Jugar de nuevo
-          </Button>
         </div>
       </div>
+    )
+    return (
+      <GameLeadForm
+        config={config}
+        result={gameResult}
+        statsSlot={statsSlot}
+        onReset={() => setScreen('start')}
+      />
     )
   }
 

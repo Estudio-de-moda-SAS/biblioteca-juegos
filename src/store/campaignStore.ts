@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { CampaignConfig, GameId, Prize, PuzzleSettings, FindDifferencesSettings, MemoryMatchSettings } from '@/shared/types'
+import type { CampaignConfig, GameId, Prize, PuzzleSettings, FindDifferencesSettings, MemoryMatchSettings, WoowupConfig } from '@/shared/types'
 import { MEMORY_MATCH_CARDS } from '@/games/memory-match'
 
 const DEFAULT_MEMORY_MATCH_SETTINGS: MemoryMatchSettings = {
@@ -61,6 +61,22 @@ const FIND_DIFFERENCES_PRIZES: Prize[] = [
   { id: '5', name: 'Sin premio', probability: 0, description: 'Demasiados errores — ¡sigue intentando!' },
 ]
 
+const DEFAULT_WOOWUP_CONFIG: WoowupConfig = {
+  publicKey: '',
+  tags: 'ecommerce,newsletter',
+  serviceUidStrategy: 'email',
+  termsWoowupId: 'terms',
+  showMarketingOptIn: false,
+  sendUpdatedIn: true,
+  updatedInKey: 'updated_in',
+  prizeCodeKey: 'premio_obtenido',
+  localStorageKey: 'game_prize_code',
+  mdEnabled: false,
+  mdEntity: 'FL',
+  mdEmailField: 'mail',
+  mdTermsId: 'terms',
+}
+
 export const DEFAULT_CONFIG: CampaignConfig = {
   gameId: 'puzzle',
   title: 'Campaña Promocional',
@@ -72,6 +88,7 @@ export const DEFAULT_CONFIG: CampaignConfig = {
   logo: '',
   prizes: PUZZLE_PRIZES,
   gameSettings: DEFAULT_PUZZLE_SETTINGS,
+  woowupConfig: DEFAULT_WOOWUP_CONFIG,
 }
 
 const GAME_PRIZES: Record<GameId, Prize[]> = {

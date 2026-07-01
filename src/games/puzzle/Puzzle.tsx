@@ -3,7 +3,7 @@ import { Clock, Grid3X3, Shuffle } from 'lucide-react'
 import type { CampaignConfig, GameResult, PuzzleSettings } from '@/shared/types'
 import { prizeByThreshold, formatTime } from '@/shared/utils'
 import { useTimer } from '@/shared/hooks'
-import { GameStartScreen, GameResultScreen } from '@/shared/components'
+import { GameStartScreen, GameLeadForm } from '@/shared/components'
 import { cn } from '@/shared/utils'
 import { PUZZLE_INSTRUCTIONS } from './PuzzleConfig'
 
@@ -224,11 +224,24 @@ export function Puzzle({ config, onComplete }: Props) {
   }
 
   if (screen === 'result' && result) {
+    const statsSlot = (
+      <div className="flex justify-center gap-4">
+        <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
+          <p className="text-xs text-white/50">Tiempo</p>
+          <p className="mt-0.5 text-xl font-bold text-white">{formatTime(result.timeElapsed)}</p>
+        </div>
+        <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-sm">
+          <p className="text-xs text-white/50">Puntuación</p>
+          <p className="mt-0.5 text-xl font-bold text-white">{result.score}</p>
+        </div>
+      </div>
+    )
     return (
-      <GameResultScreen
+      <GameLeadForm
         config={config}
         result={result}
-        onReset={() => { setScreen('start') }}
+        statsSlot={statsSlot}
+        onReset={() => setScreen('start')}
       />
     )
   }

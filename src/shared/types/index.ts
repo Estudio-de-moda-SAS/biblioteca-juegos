@@ -11,5 +11,5 @@ export type {
   MemoryMatchSettings,
   GameSettings,
 } from './game'
-export type { CampaignConfig, WawSettings, CampaignConfigWithWaw } from './campaign'
+export type { CampaignConfig, WawSettings, CampaignConfigWithWaw, WoowupConfig } from './campaign'
 export type { WawLeadPayload, WawResponse, WawSubmitStatus } from './waw'
